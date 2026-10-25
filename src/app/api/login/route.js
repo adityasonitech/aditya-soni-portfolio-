@@ -1,6 +1,14 @@
+import { timingSafeEqual } from "crypto";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../../lib/firebase";
 import { NextResponse } from "next/server";
+import { createSessionToken, sessionCookieOptions, SESSION_COOKIE } from "../../../lib/adminSession";
+
+function safeEqual(a, b) {
+  const bufA = Buffer.from(String(a ?? ""));
+  const bufB = Buffer.from(String(b ?? ""));
+  return bufA.length === bufB.length && timingSafeEqual(bufA, bufB);
+}
 
 export async function POST(request) {
   try {
@@ -16,10 +24,10 @@ export async function POST(request) {
 
     if (docSnap.exists()) {
       const data = docSnap.data();
-      if (data.Email === email && data.Password === password) {
-        // In a production app, you would sign a JWT or set a secure cookie here.
-        // For now, we return success to allow the dashboard redirect.
-        return NextResponse.json({ success: true, message: "Login successful" });
+      if (safeEqual(data.Email, email) && safeEqual(data.Password, password)) {
+        const response = NextResponse.json({ success: true, message: "Login successful" });
+        response.cookies.set(SESSION_COOKIE, createSessionToken(email), sessionCookieOptions());
+        return response;
       }
     }
 

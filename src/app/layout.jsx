@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-import CursorFollower from "../components/CursorFollower";
+import Navbar from "../components/Navbar";
 import WhatsAppButton from "../components/WhatsAppButton";
 
 export const metadata = {
@@ -65,8 +65,8 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`} style={{ backgroundColor: 'var(--background)' }}>
-        <CursorFollower />
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        <Navbar />
         <WhatsAppButton />
         <main className="main-content">
           {children}

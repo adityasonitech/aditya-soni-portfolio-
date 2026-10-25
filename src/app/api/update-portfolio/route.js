@@ -1,17 +1,23 @@
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../../../lib/firebase";
 import { NextResponse } from "next/server";
+import { getSessionFromRequest } from "../../../lib/adminSession";
 
 export async function POST(request) {
   try {
+    // Only an authenticated admin (signed httpOnly cookie from /api/login) may write
+    const session = getSessionFromRequest(request);
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const data = await request.json();
 
-    if (!data) {
+    if (!data || typeof data !== "object" || Array.isArray(data)) {
       return NextResponse.json({ error: "Missing data" }, { status: 400 });
     }
 
     // Server-side write to Firestore
-    // This works even if public writes are disabled because it uses the server config
     const docRef = doc(db, "portfolio", "main");
     await setDoc(docRef, data, { merge: true });
 

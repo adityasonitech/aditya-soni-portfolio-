@@ -1,16 +1,13 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Download } from "lucide-react";
-import MagneticButton from "./MagneticButton";
-
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../lib/firebase";
 
 export default function Footer() {
-  const [name, setName] = useState("Aditya");
-  const [resumeLink, setResumeLink] = useState("/resume.pdf");
+  const [name, setName] = useState("Aditya Soni");
+  const [links, setLinks] = useState({ github: "adityajsoni25", linkedin: "aditya-soni-927ab5259", resume: "" });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,8 +16,12 @@ export default function Footer() {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const data = docSnap.data();
-          if (data.heroName) setName(data.heroName.split(" ")[0]);
-          if (data.resumeLink) setResumeLink(data.resumeLink);
+          if (data.heroName) setName(data.heroName);
+          setLinks(prev => ({
+            github: data.contactGithub || prev.github,
+            linkedin: data.contactLinkedin || prev.linkedin,
+            resume: data.resumeLink || prev.resume
+          }));
         }
       } catch (error) {
         console.error("Error fetching Footer data:", error);
@@ -30,62 +31,21 @@ export default function Footer() {
   }, []);
 
   return (
-    <footer style={{
-      padding: "4rem 2rem",
-      borderTop: "1px solid var(--glass-border)",
-      background: "var(--bg-gradient-end)",
-      marginTop: "4rem",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      gap: "2.5rem"
-    }}>
-      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-        <div style={{
-          width: "32px",
-          height: "32px",
-          borderRadius: "8px",
-          overflow: "hidden",
-          border: "1px solid rgba(255, 255, 255, 0.1)"
-        }}>
-          <img src="/logo.png" alt="AS Logo" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+    <footer className="footer">
+      <div className="footer-inner">
+        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", color: "var(--text-muted)" }}>
+          <Image src="/logo.png" alt="" width={24} height={24} style={{ borderRadius: "6px", border: "1px solid var(--border)" }} />
+          <span>© {new Date().getFullYear()} {name}</span>
         </div>
-        <span style={{ 
-          fontSize: "1rem", 
-          fontWeight: "800", 
-          letterSpacing: "1px",
-          color: "white"
-        }}>
-          ADITYA
-        </span>
-      </div>
-      <MagneticButton>
-        <a 
-          href={resumeLink} 
-          target="_blank" 
-          rel="noopener noreferrer"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.75rem",
-            padding: "1rem 2.5rem",
-            borderRadius: "30px",
-            background: "var(--foreground)",
-            color: "var(--background)",
-            fontWeight: 700,
-            fontSize: "1.125rem",
-            textDecoration: "none",
-            transition: "transform 0.2s"
-          }}
-        >
-          <Download size={20} />
-          Download Resume
-        </a>
-      </MagneticButton>
 
-      <div style={{ textAlign: "center", color: "rgba(255, 255, 255, 0.4)", fontSize: "0.875rem" }}>
-        <p style={{ margin: "0 0 0.5rem 0" }}>© {new Date().getFullYear()} {name}. All rights reserved.</p>
-        <p style={{ margin: 0 }}>Built with Next.js, Framer Motion, and Vanilla Custom CSS.</p>
+        <div className="footer-links">
+          <a href={`https://github.com/${links.github}`} target="_blank" rel="noopener noreferrer" className="link-muted">GitHub</a>
+          <a href={`https://linkedin.com/in/${links.linkedin}`} target="_blank" rel="noopener noreferrer" className="link-muted">LinkedIn</a>
+          {links.resume && (
+            <a href={links.resume} target="_blank" rel="noopener noreferrer" className="link-muted">Resume</a>
+          )}
+          <a href="#top" className="link-muted">Back to top</a>
+        </div>
       </div>
     </footer>
   );

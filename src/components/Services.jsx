@@ -42,13 +42,8 @@ export default function Services() {
 
     return () => unsubscribe();
   }, []);
-  const iconMap = {
-    Layout,
-    Smartphone,
-    Server,
-    Code,
-    Database
-  };
+
+  const iconMap = { Layout, Smartphone, Server, Code, Database };
 
   const services = (data.services || []).map(s => ({
     ...s,
@@ -56,66 +51,27 @@ export default function Services() {
   }));
 
   return (
-    <section id="services" style={{
-      padding: "1.5rem 2rem",
-      maxWidth: "1200px",
-      margin: "0 auto",
-      position: "relative"
-    }}>
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.6 }}
-        style={{ textAlign: "center", marginBottom: "2rem" }}
-      >
-        <h2 style={{ fontSize: "clamp(3rem, 7vw, 4.5rem)", fontWeight: 800, marginBottom: "1.5rem" }}>
-          Specialized <span className="text-gradient">Services</span>
-        </h2>
-        <p style={{ color: "rgba(255, 255, 255, 0.7)", fontSize: "clamp(1.1rem, 2.5vw, 1.25rem)" }}>
-          Solutions tailored to your digital needs
-        </p>
-      </motion.div>
+    <section id="services" className="section">
+      <div className="section-header">
+        <span className="eyebrow">Services</span>
+        <h2 className="section-title">What I can help with</h2>
+      </div>
 
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-        gap: "2.5rem"
-      }}>
+      <div className="grid grid-2">
         {services.map((service, i) => (
           <motion.article
-            key={i}
-            initial={{ opacity: 0, y: 30 }}
+            key={service.id || i}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: i * 0.1 }}
-            className="glass-panel"
-            style={{
-              padding: "2.5rem",
-              borderRadius: "20px",
-              display: "flex",
-              flexDirection: "column",
-              gap: "1.5rem",
-              transition: "transform 0.3s ease",
-              cursor: "default"
-            }}
+            transition={{ duration: 0.45, delay: i * 0.06 }}
+            className="card card-pad"
+            style={{ display: "flex", gap: "1.25rem", alignItems: "flex-start" }}
           >
-            <div style={{
-              width: "60px",
-              height: "60px",
-              borderRadius: "15px",
-              background: "rgba(139, 92, 246, 0.1)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "var(--primary)"
-            }}>
-              <service.icon size={32} />
-            </div>
-            
+            <div className="icon-box"><service.icon size={20} /></div>
             <div>
-              <h3 style={{ fontSize: "1.5rem", fontWeight: 700, marginBottom: "1rem" }}>{service.title}</h3>
-              <p style={{ color: "rgba(255, 255, 255, 0.7)", lineHeight: 1.8, fontSize: "1rem" }}>{service.description}</p>
+              <h3 style={{ fontSize: "1.05rem", fontWeight: 600, letterSpacing: "-0.01em", marginBottom: "0.4rem" }}>{service.title}</h3>
+              <p style={{ color: "var(--text-muted)", lineHeight: 1.65, fontSize: "0.92rem" }}>{service.description}</p>
             </div>
           </motion.article>
         ))}
