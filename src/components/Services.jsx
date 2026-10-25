@@ -5,6 +5,8 @@ import { Code, Layout, Smartphone, Server, Database } from "lucide-react";
 import { useState, useEffect } from "react";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../lib/firebase";
+import Reveal from "./motion/Reveal";
+import FadeIn from "./motion/FadeIn";
 
 export default function Services() {
   const [data, setData] = useState({
@@ -53,8 +55,8 @@ export default function Services() {
   return (
     <section id="services" className="section">
       <div className="section-header">
-        <span className="eyebrow">Services</span>
-        <h2 className="section-title">What I can help with</h2>
+        <FadeIn as="span" className="eyebrow">Services</FadeIn>
+        <Reveal as="h2" className="section-title" text="What I can help with" />
       </div>
 
       <div className="grid grid-2">
@@ -65,7 +67,7 @@ export default function Services() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.45, delay: i * 0.06 }}
-            className="card card-pad"
+            className="card card-pad card-hover"
             style={{ display: "flex", gap: "1.25rem", alignItems: "flex-start" }}
           >
             <div className="icon-box"><service.icon size={20} /></div>

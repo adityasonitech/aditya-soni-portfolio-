@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../lib/firebase";
+import Reveal from "./motion/Reveal";
+import FadeIn from "./motion/FadeIn";
 
 const AnimatedNumber = ({ value }) => {
   const [count, setCount] = useState(0);
@@ -78,9 +80,9 @@ export default function AboutMe() {
         className="split"
       >
         <div className="section-header">
-          <span className="eyebrow">About me</span>
-          <h2 className="section-title">Building for the web, one problem at a time.</h2>
-          <p className="section-lead">{data.aboutText}</p>
+          <FadeIn as="span" className="eyebrow">About me</FadeIn>
+          <Reveal as="h2" className="section-title" text="Building for the web, one problem at a time." />
+          <FadeIn as="p" className="section-lead" delay={0.25}>{data.aboutText}</FadeIn>
         </div>
 
         <div className="stats">

@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
+import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import { EASE } from "../lib/motion";
 
 const links = [
   { href: "#about", label: "About" },
@@ -14,8 +15,11 @@ const links = [
 ];
 
 export default function Navbar() {
-  const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const { scrollY } = useScroll();
+
+  useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > 24));
 
   // Close the mobile menu when the viewport grows past the phone breakpoint
   useEffect(() => {
@@ -25,13 +29,13 @@ export default function Navbar() {
     return () => mq.removeEventListener("change", onChange);
   }, []);
 
-  // Admin pages have their own chrome
-  if (pathname?.startsWith("/dashboard-ctrl") || pathname?.startsWith("/portal-access")) {
-    return null;
-  }
-
   return (
-    <header className="nav">
+    <motion.header
+      className={`nav${scrolled ? " scrolled" : ""}`}
+      initial={{ y: -80, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.8, ease: EASE, delay: 0.2 }}
+    >
       <div className="nav-inner">
         <a href="#top" className="nav-brand" aria-label="Back to top" onClick={() => setOpen(false)}>
           <Image src="/logo.png" alt="" width={30} height={30} priority />
@@ -40,7 +44,7 @@ export default function Navbar() {
 
         <nav className="nav-links" aria-label="Primary">
           {links.map((link) => (
-            <a key={link.href} href={link.href}>{link.label}</a>
+            <a key={link.href} href={link.href} className="nav-link">{link.label}</a>
           ))}
         </nav>
 
@@ -69,6 +73,6 @@ export default function Navbar() {
           Let&apos;s talk
         </a>
       </nav>
-    </header>
+    </motion.header>
   );
 }

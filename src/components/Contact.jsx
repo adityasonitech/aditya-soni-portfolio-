@@ -5,6 +5,8 @@ import { Mail, MapPin, Phone, Linkedin, Github, ArrowRight } from "lucide-react"
 import { useState, useEffect } from "react";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../lib/firebase";
+import Reveal from "./motion/Reveal";
+import FadeIn from "./motion/FadeIn";
 
 export default function Contact() {
   const [data, setData] = useState({
@@ -72,9 +74,9 @@ export default function Contact() {
       <div className="split">
         <div>
           <div className="section-header" style={{ marginBottom: "1.75rem" }}>
-            <span className="eyebrow">Contact</span>
-            <h2 className="section-title">Let&apos;s build something together.</h2>
-            <p className="section-lead">Have a project in mind, or just want to say hello? My inbox is always open.</p>
+            <FadeIn as="span" className="eyebrow">Contact</FadeIn>
+            <Reveal as="h2" className="section-title" text={"Let\u2019s build something together."} />
+            <FadeIn as="p" className="section-lead" delay={0.25}>Have a project in mind, or just want to say hello? My inbox is always open.</FadeIn>
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
@@ -163,7 +165,7 @@ export default function Contact() {
             />
           </div>
 
-          <button type="submit" disabled={isSubmitting} className="btn btn-primary" style={{ marginTop: "0.25rem" }}>
+          <button type="submit" disabled={isSubmitting} className="btn btn-primary btn-shimmer" style={{ marginTop: "0.25rem" }}>
             {isSubmitting ? "Sending..." : status === 'success' ? "Message sent" : "Send message"}
             {!isSubmitting && status !== 'success' && <ArrowRight size={16} />}
           </button>

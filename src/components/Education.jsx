@@ -5,6 +5,8 @@ import { GraduationCap } from "lucide-react";
 import { useState, useEffect } from "react";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../lib/firebase";
+import Reveal from "./motion/Reveal";
+import FadeIn from "./motion/FadeIn";
 
 export default function Education() {
   const [data, setData] = useState({
@@ -59,8 +61,8 @@ export default function Education() {
   return (
     <section id="education" className="section">
       <div className="section-header">
-        <span className="eyebrow">Education</span>
-        <h2 className="section-title">Academic background</h2>
+        <FadeIn as="span" className="eyebrow">Education</FadeIn>
+        <Reveal as="h2" className="section-title" text="Academic background" />
       </div>
 
       <div className="grid grid-3">
@@ -71,7 +73,7 @@ export default function Education() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.45, delay: i * 0.08 }}
-            className="card card-pad"
+            className="card card-pad card-hover"
             style={{ display: "flex", flexDirection: "column", gap: "0.9rem" }}
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.75rem" }}>

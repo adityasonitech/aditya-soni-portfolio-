@@ -12,8 +12,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-import Navbar from "../components/Navbar";
-import WhatsAppButton from "../components/WhatsAppButton";
+import SiteChrome from "../components/SiteChrome";
 
 export const metadata = {
   metadataBase: new URL("https://aditya-soni-portfolio-xi.vercel.app"), // Replace with your actual domain later
@@ -66,8 +65,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <Navbar />
-        <WhatsAppButton />
+        <SiteChrome />
         <main className="main-content">
           {children}
         </main>

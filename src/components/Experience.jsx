@@ -1,9 +1,11 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { motion, useScroll, useSpring } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../lib/firebase";
+import Reveal from "./motion/Reveal";
+import FadeIn from "./motion/FadeIn";
 
 export default function Experience() {
   const [data, setData] = useState({
@@ -43,16 +45,22 @@ export default function Experience() {
 
   const experiences = [...(data.experiences || [])].reverse();
 
+  // The timeline line draws itself as the list scrolls through the viewport
+  const timelineRef = useRef(null);
+  const { scrollYProgress } = useScroll({ target: timelineRef, offset: ["start 80%", "end 60%"] });
+  const lineScale = useSpring(scrollYProgress, { stiffness: 90, damping: 28, mass: 0.4 });
+
   return (
     <section id="experience" className="section">
       <div className="split">
         <div className="section-header">
-          <span className="eyebrow">Experience</span>
-          <h2 className="section-title">My journey so far</h2>
-          <p className="section-lead">Where I have worked, trained, and studied.</p>
+          <FadeIn as="span" className="eyebrow">Experience</FadeIn>
+          <Reveal as="h2" className="section-title" text="My journey so far" />
+          <FadeIn as="p" className="section-lead" delay={0.25}>Where I have worked, trained, and studied.</FadeIn>
         </div>
 
-        <div className="timeline">
+        <div className="timeline" ref={timelineRef}>
+          <motion.div className="timeline-progress" style={{ scaleY: lineScale }} aria-hidden="true" />
           {experiences.map((exp, i) => (
             <motion.article
               key={exp.id || i}
@@ -62,7 +70,7 @@ export default function Experience() {
               transition={{ duration: 0.5, delay: i * 0.08 }}
               className="timeline-item"
             >
-              <div className="card card-pad">
+              <div className="card card-pad card-hover">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.75rem", flexWrap: "wrap", marginBottom: "0.75rem" }}>
                   <span className="chip chip-accent">{exp.year}</span>
                   {exp.location && <span style={{ color: "var(--text-faint)", fontSize: "0.85rem" }}>{exp.location}</span>}

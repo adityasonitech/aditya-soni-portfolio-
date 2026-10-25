@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../lib/firebase";
+import Reveal from "./motion/Reveal";
+import FadeIn from "./motion/FadeIn";
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
 
 export default function Testimonials() {
@@ -65,8 +67,8 @@ export default function Testimonials() {
   return (
     <section id="testimonials" className="section">
       <div className="section-header center">
-        <span className="eyebrow">Testimonials</span>
-        <h2 className="section-title">What people say</h2>
+        <FadeIn as="span" className="eyebrow">Testimonials</FadeIn>
+        <Reveal as="h2" className="section-title" text="What people say" />
       </div>
 
       <div style={{ maxWidth: "720px", margin: "0 auto" }}>

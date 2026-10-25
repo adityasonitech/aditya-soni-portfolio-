@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../lib/firebase";
+import Reveal from "./motion/Reveal";
+import FadeIn from "./motion/FadeIn";
 
 export default function Skills() {
   const [data, setData] = useState({
@@ -49,9 +51,9 @@ export default function Skills() {
   return (
     <section id="skills" className="section">
       <div className="section-header">
-        <span className="eyebrow">Skills</span>
-        <h2 className="section-title">Tools I work with</h2>
-        <p className="section-lead">The languages, frameworks, and tooling I reach for day to day.</p>
+        <FadeIn as="span" className="eyebrow">Skills</FadeIn>
+        <Reveal as="h2" className="section-title" text="Tools I work with" />
+        <FadeIn as="p" className="section-lead" delay={0.25}>The languages, frameworks, and tooling I reach for day to day.</FadeIn>
       </div>
 
       <div className="grid grid-3">
@@ -62,14 +64,14 @@ export default function Skills() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.45, delay: i * 0.06 }}
-            className="card card-pad"
+            className="card card-pad card-hover"
           >
             <h3 style={{ fontSize: "0.8rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-faint)", marginBottom: "1rem" }}>
               {cat.title}
             </h3>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
               {cat.skills.map((skill) => (
-                <span key={skill} className="chip" style={{ color: "var(--foreground)" }}>{skill}</span>
+                <span key={skill} className="chip chip-hover" style={{ color: "var(--foreground)" }}>{skill}</span>
               ))}
             </div>
           </motion.div>

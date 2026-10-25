@@ -6,6 +6,9 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../lib/firebase";
+import Reveal from "./motion/Reveal";
+import FadeIn from "./motion/FadeIn";
+import TiltCard from "./motion/TiltCard";
 
 export default function Projects() {
   const [data, setData] = useState({
@@ -65,9 +68,9 @@ export default function Projects() {
   return (
     <section id="projects" className="section">
       <div className="section-header">
-        <span className="eyebrow">Projects</span>
-        <h2 className="section-title">Selected work</h2>
-        <p className="section-lead">A few things I have built recently.</p>
+        <FadeIn as="span" className="eyebrow">Projects</FadeIn>
+        <Reveal as="h2" className="section-title" text="Selected work" />
+        <FadeIn as="p" className="section-lead" delay={0.25}>A few things I have built recently.</FadeIn>
       </div>
 
       <motion.div
@@ -83,11 +86,10 @@ export default function Projects() {
           const showLive = project.showLive !== false && isRealUrl(project.live);
 
           return (
-            <motion.article
-              key={project.id || idx}
-              variants={card}
-              className="card"
-              style={{ display: "flex", flexDirection: "column", overflow: "hidden" }}
+            <motion.div key={project.id || idx} variants={card} style={{ display: "flex" }}>
+            <TiltCard
+              className="card project-card"
+              style={{ display: "flex", flexDirection: "column", overflow: "hidden", width: "100%" }}
             >
               <div style={{
                 position: "relative",
@@ -104,6 +106,7 @@ export default function Projects() {
                     src={project.image}
                     alt={project.title}
                     fill
+                    className="project-img"
                     style={{ objectFit: "cover" }}
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   />
@@ -155,7 +158,8 @@ export default function Projects() {
                   </div>
                 )}
               </div>
-            </motion.article>
+            </TiltCard>
+            </motion.div>
           );
         })}
       </motion.div>
