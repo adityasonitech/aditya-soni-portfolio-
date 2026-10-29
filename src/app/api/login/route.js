@@ -1,8 +1,9 @@
 import { timingSafeEqual } from "crypto";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../../lib/firebase";
 import { NextResponse } from "next/server";
+import { adminDb } from "../../../lib/firebaseAdmin";
 import { createSessionToken, sessionCookieOptions, SESSION_COOKIE } from "../../../lib/adminSession";
+
+export const runtime = "nodejs";
 
 function safeEqual(a, b) {
   const bufA = Buffer.from(String(a ?? ""));
@@ -18,12 +19,11 @@ export async function POST(request) {
       return NextResponse.json({ error: "Email and password are required" }, { status: 400 });
     }
 
-    // Server-side validation against Firestore
-    const docRef = doc(db, "admin-credential", "Admin-credential");
-    const docSnap = await getDoc(docRef);
+    // Admin SDK read: the admin-credential collection is unreadable from any client
+    const snap = await adminDb().collection("admin-credential").doc("Admin-credential").get();
 
-    if (docSnap.exists()) {
-      const data = docSnap.data();
+    if (snap.exists) {
+      const data = snap.data();
       if (safeEqual(data.Email, email) && safeEqual(data.Password, password)) {
         const response = NextResponse.json({ success: true, message: "Login successful" });
         response.cookies.set(SESSION_COOKIE, createSessionToken(email), sessionCookieOptions());
