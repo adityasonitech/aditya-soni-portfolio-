@@ -313,10 +313,13 @@ img, svg, video { max-width: 100%; height: auto; }
   overflow: hidden;
   min-height: calc(100svh - var(--nav-h));
   display: flex;
+  flex-direction: column; /* content stacks above the marquee; never side by side */
   align-items: center;
   justify-content: center;
   padding: var(--section-y) var(--gutter);
 }
+.hero-content { width: 100%; }
+.hero-marquee { width: 100%; max-width: 100%; }
 .hero-glow {
   position: absolute;
   top: -220px;
@@ -454,7 +457,7 @@ img, svg, video { max-width: 100%; height: auto; }
   vertical-align: bottom;
   padding: 0.05em 0;
 }
-.rotating-item { grid-area: 1 / 1; display: inline-block; white-space: nowrap; color: var(--primary); }
+.rotating-item { grid-area: 1 / 1; display: inline-block; white-space: nowrap; color: var(--primary); justify-self: center; }
 
 /* Intro curtain */
 .intro {

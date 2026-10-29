@@ -21,14 +21,14 @@ export default function RotatingText({ items = [], interval = 2600, className = 
 
   return (
     <span className={`rotating ${className}`}>
-      <AnimatePresence mode="wait" initial={false}>
+      <AnimatePresence initial={false}>
         <motion.span
           key={current}
           className="rotating-item"
           initial={{ y: "100%", opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: "-100%", opacity: 0 }}
-          transition={{ duration: 0.5, ease: EASE }}
+          transition={{ duration: 0.45, ease: EASE }}
         >
           {current}
         </motion.span>
