@@ -1,7 +1,8 @@
-import { doc, setDoc } from "firebase/firestore";
-import { db } from "../../../lib/firebase";
 import { NextResponse } from "next/server";
+import { adminDb } from "../../../lib/firebaseAdmin";
 import { getSessionFromRequest } from "../../../lib/adminSession";
+
+export const runtime = "nodejs";
 
 export async function POST(request) {
   try {
@@ -17,9 +18,8 @@ export async function POST(request) {
       return NextResponse.json({ error: "Missing data" }, { status: 400 });
     }
 
-    // Server-side write to Firestore
-    const docRef = doc(db, "portfolio", "main");
-    await setDoc(docRef, data, { merge: true });
+    // Admin SDK write: bypasses the client-side deny-all write rule
+    await adminDb().collection("portfolio").doc("main").set(data, { merge: true });
 
     return NextResponse.json({ success: true, message: "Portfolio updated successfully" });
   } catch (error) {
