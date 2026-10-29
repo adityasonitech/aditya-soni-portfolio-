@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 import SiteChrome from "../components/SiteChrome";
 
 export const metadata = {
-  metadataBase: new URL("https://aditya-soni-portfolio-xi.vercel.app"), // Replace with your actual domain later
+  metadataBase: new URL("https://adityasoni-dev.vercel.app"),
   verification: {
     google: "xlTzS4rvMxOG6pdWEvNwbHjMejjZW4hmNIPNhg_C208",
   },
@@ -30,7 +30,7 @@ export const metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://aditya-soni-portfolio-xi.vercel.app",
+    url: "https://adityasoni-dev.vercel.app",
     title: "Aditya Soni | Full Stack Developer & UI/UX Designer",
     description: "Creative Full Stack Developer specializing in premium animated web experiences.",
     siteName: "Aditya Soni Portfolio",

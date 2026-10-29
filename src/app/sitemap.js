@@ -1,5 +1,5 @@
 export default function sitemap() {
-  const baseUrl = "https://aditya-soni-portfolio-xi.vercel.app";
+  const baseUrl = "https://adityasoni-dev.vercel.app";
   
   return [
     {
