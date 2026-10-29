@@ -1,18 +1,21 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ExternalLink, Github } from "lucide-react";
+import { ExternalLink, Github, FolderGit2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../lib/firebase";
+import Reveal from "./motion/Reveal";
+import FadeIn from "./motion/FadeIn";
+import TiltCard from "./motion/TiltCard";
 
 export default function Projects() {
   const [data, setData] = useState({
     projects: [
-      { id: 1, title: "Scan2Health", description: "A health-aware barcode scanner web app enabling users to access comprehensive nutritional data, ingredient lists, and health impact assessments.", image: "", tech: "Web App, Frontend, Backend", github: "#", showGithub: true, live: "#", showLive: true },
-      { id: 2, title: "Customer Order Tracking System", description: "A cloud-ready SAP ABAP application built using RAP. Integrates customer, product, and order data with CDS views and OData services supporting complete CRUD operations.", image: "", tech: "SAP ABAP, RAP, OData", github: "#", showGithub: true, live: "#", showLive: true },
-      { id: 3, title: "Database Administration", description: "Designed and normalized relational databases in Oracle/MySQL with constraints, indexes, and triggers to ensure secure and efficient operations.", image: "", tech: "Oracle, MySQL, DB Design", github: "#", showGithub: true, live: "#", showLive: true }
+      { id: 1, title: "Scan2Health", description: "A health-aware barcode scanner web app enabling users to access comprehensive nutritional data, ingredient lists, and health impact assessments.", image: "", tech: "Web App, Frontend, Backend", github: "", showGithub: true, live: "", showLive: true },
+      { id: 2, title: "Customer Order Tracking System", description: "A cloud-ready SAP ABAP application built using RAP. Integrates customer, product, and order data with CDS views and OData services supporting complete CRUD operations.", image: "", tech: "SAP ABAP, RAP, OData", github: "", showGithub: true, live: "", showLive: true },
+      { id: 3, title: "Database Administration", description: "Designed and normalized relational databases in Oracle/MySQL with constraints, indexes, and triggers to ensure secure and efficient operations.", image: "", tech: "Oracle, MySQL, DB Design", github: "", showGithub: true, live: "", showLive: true }
     ]
   });
 
@@ -29,9 +32,9 @@ export default function Projects() {
             description: fetchedData[`proj${i}Desc`] || "",
             image: "",
             tech: "",
-            github: "#",
+            github: "",
             showGithub: true,
-            live: "#",
+            live: "",
             showLive: true
           })).filter(p => p.title || p.description);
         }
@@ -46,151 +49,119 @@ export default function Projects() {
 
     return () => unsubscribe();
   }, []);
+
   const projects = data.projects || [];
 
-  // Used for fallbacks if no image is provided
-  const gradients = [
-    "var(--gradient-1)",
-    "var(--gradient-2)",
-    "linear-gradient(135deg, #10b981, #3b82f6)",
-    "linear-gradient(135deg, #f59e0b, #ef4444)",
-    "linear-gradient(135deg, #8b5cf6, #ec4899)"
-  ];
+  // A link is only shown when it points somewhere real (not empty, not the "#" placeholder)
+  const isRealUrl = (url) => typeof url === "string" && /^https?:\/\//i.test(url.trim());
 
-  const containerVariants = {
+  const container = {
     hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-      },
-    },
+    show: { opacity: 1, transition: { staggerChildren: 0.1 } },
   };
 
-  const cardVariants = {
-    hidden: { opacity: 0, y: 50 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100, damping: 15 } },
+  const card = {
+    hidden: { opacity: 0, y: 24 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
   };
 
   return (
-    <section id="projects" style={{
-      padding: "1.5rem 2rem",
-      maxWidth: "1200px",
-      margin: "0 auto",
-      position: "relative"
-    }}>
-      <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-        <h2 style={{ fontSize: "clamp(3rem, 7vw, 4.5rem)", fontWeight: 800, marginBottom: "1.5rem" }}>
-          Featured <span className="text-gradient">Projects</span>
-        </h2>
-        <p style={{ color: "rgba(255, 255, 255, 0.7)", fontSize: "clamp(1.1rem, 2.5vw, 1.25rem)" }}>
-          A selection of my recent works
-        </p>
+    <section id="projects" className="section">
+      <div className="section-header">
+        <FadeIn as="span" className="eyebrow">Projects</FadeIn>
+        <Reveal as="h2" className="section-title" text="Selected work" />
+        <FadeIn as="p" className="section-lead" delay={0.25}>A few things I have built recently.</FadeIn>
       </div>
 
       <motion.div
-        variants={containerVariants}
+        variants={container}
         initial="hidden"
         whileInView="show"
-        viewport={{ once: true, margin: "-100px" }}
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-          gap: "2.5rem",
-        }}
+        viewport={{ once: true, margin: "-80px" }}
+        className="grid grid-3"
       >
-        {projects.map((project, idx) => (
-          <motion.article 
-            key={project.id || idx} 
-            variants={cardVariants}
-            className="glass-panel"
-            style={{
-              padding: "2.5rem",
-              display: "flex",
-              flexDirection: "column",
-              gap: "1.5rem",
-              height: "100%", // Ensures identical card sizes
-              transition: "transform 0.3s ease, box-shadow 0.3s ease",
-            }}
-            whileHover={{ y: -10, boxShadow: "0 20px 40px rgba(0,0,0,0.4)" }}
-          >
-            <div style={{
-              height: "200px",
-              borderRadius: "12px",
-              background: project.image ? "rgba(255,255,255,0.02)" : gradients[idx % gradients.length],
-              position: "relative",
-              overflow: "hidden",
-            }}>
-              {project.image && (
-                <Image 
-                  src={project.image} 
-                  alt={project.title} 
-                  fill 
-                  style={{ objectFit: "cover" }}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                />
-              )}
-              {/* Fake image overlay for premium look */}
+        {projects.map((project, idx) => {
+          const tags = project.tech ? project.tech.split(",").map(t => t.trim()).filter(Boolean) : [];
+          const showGithub = project.showGithub !== false && isRealUrl(project.github);
+          const showLive = project.showLive !== false && isRealUrl(project.live);
+
+          return (
+            <motion.div key={project.id || idx} variants={card} style={{ display: "flex" }}>
+            <TiltCard
+              className="card project-card"
+              style={{ display: "flex", flexDirection: "column", overflow: "hidden", width: "100%" }}
+            >
               <div style={{
-                position: "absolute",
-                inset: 0,
-                background: "linear-gradient(to top, rgba(0,0,0,0.6), transparent)",
-                zIndex: 1
-              }} />
-            </div>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", flexGrow: 1 }}>
-              <h3 style={{ fontSize: "1.5rem", fontWeight: "700" }}>{project.title}</h3>
-              <p style={{ color: "rgba(255, 255, 255, 0.6)", lineHeight: 1.6, flexGrow: 1 }}>
-                {project.description}
-              </p>
-              
-              <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginTop: "1rem" }}>
-                {project.tech && project.tech.split(",").map(t => t.trim()).filter(Boolean).map((tag, tIdx) => (
-                  <span key={tIdx} style={{
-                    fontSize: "0.75rem",
-                    padding: "0.25rem 0.75rem",
-                    borderRadius: "20px",
-                    background: "rgba(255, 255, 255, 0.1)",
-                    color: "rgba(255, 255, 255, 0.8)",
-                    border: "1px solid rgba(255,255,255,0.05)"
-                  }}>
-                    {tag}
-                  </span>
-                ))}
+                position: "relative",
+                height: "180px",
+                background: "linear-gradient(160deg, rgba(139, 92, 246, 0.18), rgba(99, 102, 241, 0.06) 60%, transparent)",
+                borderBottom: "1px solid var(--border)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "rgba(167, 139, 250, 0.45)"
+              }}>
+                {project.image ? (
+                  <Image
+                    src={project.image}
+                    alt={project.title}
+                    fill
+                    className="project-img"
+                    style={{ objectFit: "cover" }}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
+                ) : (
+                  <FolderGit2 size={40} strokeWidth={1.25} />
+                )}
               </div>
-            </div>
 
-            <div style={{ display: "flex", gap: "1rem", marginTop: "1rem", paddingTop: "1rem", borderTop: "1px solid var(--glass-border)" }}>
-              {project.showGithub !== false && (
-                <a 
-                  href={project.github || "#"} 
-                  target="_blank" 
-                  rel="noreferrer" 
-                  aria-label={`View ${project.title} code on GitHub`}
-                  style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.875rem", fontWeight: "600", color: "rgba(255,255,255,0.8)", transition: "color 0.2s" }} 
-                  onMouseOver={(e) => e.currentTarget.style.color = "var(--primary)"} 
-                  onMouseOut={(e) => e.currentTarget.style.color = "rgba(255,255,255,0.8)"}
-                >
-                  <Github size={16} /> Code Base
-                </a>
-              )}
-              {project.showLive !== false && (
-                <a 
-                  href={project.live || "#"} 
-                  target="_blank" 
-                  rel="noreferrer" 
-                  aria-label={`View live demo of ${project.title}`}
-                  style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.875rem", fontWeight: "600", color: "rgba(255,255,255,0.8)", transition: "color 0.2s" }} 
-                  onMouseOver={(e) => e.currentTarget.style.color = "var(--accent)"} 
-                  onMouseOut={(e) => e.currentTarget.style.color = "rgba(255,255,255,0.8)"}
-                >
-                  <ExternalLink size={16} /> Live Demo
-                </a>
-              )}
-            </div>
-          </motion.article>
-        ))}
+              <div className="card-pad" style={{ display: "flex", flexDirection: "column", gap: "0.75rem", flexGrow: 1 }}>
+                <h3 style={{ fontSize: "1.15rem", fontWeight: 600, letterSpacing: "-0.01em" }}>{project.title}</h3>
+                <p style={{ color: "var(--text-muted)", lineHeight: 1.65, fontSize: "0.92rem", flexGrow: 1 }}>
+                  {project.description}
+                </p>
+
+                {tags.length > 0 && (
+                  <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
+                    {tags.map((tag) => (
+                      <span key={tag} className="chip">{tag}</span>
+                    ))}
+                  </div>
+                )}
+
+                {(showGithub || showLive) && (
+                  <div style={{ display: "flex", gap: "1.25rem", paddingTop: "1rem", marginTop: "0.25rem", borderTop: "1px solid var(--border)" }}>
+                    {showGithub && (
+                      <a
+                        href={project.github.trim()}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="link-muted"
+                        aria-label={`View ${project.title} code on GitHub`}
+                        style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", fontSize: "0.85rem", fontWeight: 500 }}
+                      >
+                        <Github size={15} /> Code
+                      </a>
+                    )}
+                    {showLive && (
+                      <a
+                        href={project.live.trim()}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="link-muted"
+                        aria-label={`View live demo of ${project.title}`}
+                        style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", fontSize: "0.85rem", fontWeight: 500 }}
+                      >
+                        <ExternalLink size={15} /> Live demo
+                      </a>
+                    )}
+                  </div>
+                )}
+              </div>
+            </TiltCard>
+            </motion.div>
+          );
+        })}
       </motion.div>
     </section>
   );

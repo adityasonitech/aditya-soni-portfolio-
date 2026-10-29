@@ -1,9 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { GraduationCap } from "lucide-react";
 import { useState, useEffect } from "react";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../lib/firebase";
+import Reveal from "./motion/Reveal";
+import FadeIn from "./motion/FadeIn";
 
 export default function Education() {
   const [data, setData] = useState({
@@ -56,80 +59,32 @@ export default function Education() {
   }
 
   return (
-    <section id="education" style={{
-      padding: "4rem 2rem",
-      maxWidth: "1100px",
-      margin: "0 auto",
-      position: "relative"
-    }}>
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.6 }}
-        style={{ textAlign: "center", marginBottom: "3.5rem" }}
-      >
-        <h2 style={{ fontSize: "clamp(3rem, 7vw, 4.5rem)", fontWeight: 800, marginBottom: "1.5rem" }}>
-          Education <span className="text-gradient-alt">Background</span>
-        </h2>
-        <p style={{ color: "rgba(255, 255, 255, 0.7)", fontSize: "clamp(1.1rem, 2.5vw, 1.25rem)", maxWidth: "700px", margin: "0 auto" }}>
-          My academic journey and qualifications.
-        </p>
-      </motion.div>
+    <section id="education" className="section">
+      <div className="section-header">
+        <FadeIn as="span" className="eyebrow">Education</FadeIn>
+        <Reveal as="h2" className="section-title" text="Academic background" />
+      </div>
 
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-        gap: "2rem"
-      }}>
+      <div className="grid grid-3">
         {data.education.map((edu, i) => (
           <motion.article
             key={edu.id}
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: i * 0.1 }}
-            className="glass-panel"
-            style={{
-              padding: "2.5rem",
-              display: "flex",
-              flexDirection: "column",
-              gap: "1rem",
-              position: "relative",
-              overflow: "hidden"
-            }}
+            transition={{ duration: 0.45, delay: i * 0.08 }}
+            className="card card-pad card-hover"
+            style={{ display: "flex", flexDirection: "column", gap: "0.9rem" }}
           >
-            <div style={{
-              position: "absolute",
-              top: "0",
-              right: "0",
-              padding: "0.5rem 1.2rem",
-              background: "var(--gradient-2)",
-              color: "white",
-              fontSize: "0.75rem",
-              fontWeight: 800,
-              borderBottomLeftRadius: "12px",
-              textTransform: "uppercase"
-            }}>
-              {edu.year}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.75rem" }}>
+              <div className="icon-box"><GraduationCap size={20} /></div>
+              <span className="chip">{edu.year}</span>
             </div>
-            
-            <h3 style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--primary)", marginTop: "1rem" }}>
-              {edu.degree}
-            </h3>
-            
-            <h4 style={{ fontSize: "1.1rem", fontWeight: 600, color: "#fff" }}>
-              {edu.institution}
-            </h4>
-            
-            <p style={{ 
-              color: "rgba(255, 255, 255, 0.65)", 
-              fontSize: "0.95rem", 
-              lineHeight: 1.7,
-              margin: 0 
-            }}>
-              {edu.details}
-            </p>
+            <div>
+              <h3 style={{ fontSize: "1.1rem", fontWeight: 600, letterSpacing: "-0.01em", marginBottom: "0.25rem" }}>{edu.degree}</h3>
+              <p style={{ fontSize: "0.9rem", color: "var(--primary)", fontWeight: 500 }}>{edu.institution}</p>
+            </div>
+            <p style={{ color: "var(--text-muted)", fontSize: "0.92rem", lineHeight: 1.65 }}>{edu.details}</p>
           </motion.article>
         ))}
       </div>

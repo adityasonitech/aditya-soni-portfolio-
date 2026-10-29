@@ -27,9 +27,9 @@ export default function AdminDashboard() {
     contactGithub: "adityajsoni25",
     resumeLink: "",
     projects: [
-      { id: 1, title: "Scan2Health", description: "A health-aware barcode scanner web app enabling users to access comprehensive nutritional data, ingredient lists, and health impact assessments.", image: "", tech: "Web App, Frontend, Backend", github: "#", showGithub: true, live: "#", showLive: true },
-      { id: 2, title: "Customer Order Tracking System", description: "A cloud-ready SAP ABAP application built using RAP. Integrates customer, product, and order data with CDS views and OData services supporting complete CRUD operations.", image: "", tech: "SAP ABAP, RAP, OData", github: "#", showGithub: true, live: "#", showLive: true },
-      { id: 3, title: "Database Administration", description: "Designed and normalized relational databases in Oracle/MySQL with constraints, indexes, and triggers to ensure secure and efficient operations.", image: "", tech: "Oracle, MySQL, DB Design", github: "#", showGithub: true, live: "#", showLive: true }
+      { id: 1, title: "Scan2Health", description: "A health-aware barcode scanner web app enabling users to access comprehensive nutritional data, ingredient lists, and health impact assessments.", image: "", tech: "Web App, Frontend, Backend", github: "", showGithub: true, live: "", showLive: true },
+      { id: 2, title: "Customer Order Tracking System", description: "A cloud-ready SAP ABAP application built using RAP. Integrates customer, product, and order data with CDS views and OData services supporting complete CRUD operations.", image: "", tech: "SAP ABAP, RAP, OData", github: "", showGithub: true, live: "", showLive: true },
+      { id: 3, title: "Database Administration", description: "Designed and normalized relational databases in Oracle/MySQL with constraints, indexes, and triggers to ensure secure and efficient operations.", image: "", tech: "Oracle, MySQL, DB Design", github: "", showGithub: true, live: "", showLive: true }
     ],
     experiences: [
       { id: 1, year: "Present", role: "Full Stack Web Developer", company: "Growlity, Inc.", description: "Working as a Full Stack Web Developer leveraging technologies like React, Node.js, Express, MongoDB, and PostgreSQL." },
@@ -135,9 +135,9 @@ export default function AdminDashboard() {
               description: fetchedData[`proj${i}Desc`] || "",
               image: "",
               tech: "",
-              github: "#",
+              github: "",
               showGithub: true,
-              live: "#",
+              live: "",
               showLive: true
             })).filter(p => p.title || p.description);
           }
@@ -219,7 +219,12 @@ export default function AdminDashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/logout", { method: "POST" });
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
     sessionStorage.removeItem("isAdminLoggedIn");
     router.push("/portal-access");
   };
@@ -374,6 +379,10 @@ export default function AdminDashboard() {
 
       if (resp.ok) {
         alert("Changes saved and live!");
+      } else if (resp.status === 401) {
+        alert("Your session has expired. Please log in again.");
+        sessionStorage.removeItem("isAdminLoggedIn");
+        router.push("/portal-access");
       } else {
         const errData = await resp.json();
         alert(`Failed to save: ${errData.error || "Unknown error"}`);

@@ -12,8 +12,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-import CursorFollower from "../components/CursorFollower";
-import WhatsAppButton from "../components/WhatsAppButton";
+import SiteChrome from "../components/SiteChrome";
 
 export const metadata = {
   metadataBase: new URL("https://aditya-soni-portfolio-xi.vercel.app"), // Replace with your actual domain later
@@ -65,9 +64,8 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`} style={{ backgroundColor: 'var(--background)' }}>
-        <CursorFollower />
-        <WhatsAppButton />
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        <SiteChrome />
         <main className="main-content">
           {children}
         </main>

@@ -3,24 +3,52 @@ import { NextResponse } from 'next/server';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const MAX_NAME = 100;
+const MAX_EMAIL = 254;
+const MAX_MESSAGE = 5000;
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 export async function POST(request) {
   try {
-    const { name, email, message } = await request.json();
+    const body = await request.json();
+    const rawName = typeof body?.name === 'string' ? body.name.trim() : '';
+    const rawEmail = typeof body?.email === 'string' ? body.email.trim() : '';
+    const rawMessage = typeof body?.message === 'string' ? body.message.trim() : '';
 
-    if (!name || !email || !message) {
+    if (!rawName || !rawEmail || !rawMessage) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
+    if (rawName.length > MAX_NAME || rawEmail.length > MAX_EMAIL || rawMessage.length > MAX_MESSAGE) {
+      return NextResponse.json({ error: 'Input too long' }, { status: 400 });
+    }
+    if (!EMAIL_RE.test(rawEmail)) {
+      return NextResponse.json({ error: 'Invalid email address' }, { status: 400 });
+    }
+
+    // Escaped versions for safe use inside HTML. Newlines in the message become <br>.
+    const name = escapeHtml(rawName);
+    const email = escapeHtml(rawEmail);
+    const message = escapeHtml(rawMessage).replace(/\r?\n/g, '<br>');
 
     // 1. Send Notification to Owner
     const ownerEmail = await resend.emails.send({
       from: 'Portfolio Contact <onboarding@resend.dev>', // Default for unverified domains
       to: 'adityasoni.tech04@gmail.com',
-      subject: `New Message from ${name}`,
+      subject: `New Message from ${rawName.replace(/[\r\n]/g, ' ')}`,
       html: `
         <div style="font-family: sans-serif; padding: 20px; border: 1px solid #eaeaea; border-radius: 10px;">
           <h2 style="color: #333;">New Contact Form Submission</h2>
           <p><strong>Name:</strong> ${name}</p>
-          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
           <p><strong>Message:</strong></p>
           <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; border-left: 4px solid #8b5cf6;">
             ${message}
@@ -32,7 +60,7 @@ export async function POST(request) {
     // 2. Send Auto-Reply to Sender
     const autoReply = await resend.emails.send({
       from: 'Aditya Soni <onboarding@resend.dev>',
-      to: email,
+      to: rawEmail,
       subject: 'Message Received - Aditya Soni Portfolio',
       html: `
         <!DOCTYPE html>

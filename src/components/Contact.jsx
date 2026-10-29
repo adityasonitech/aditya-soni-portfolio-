@@ -1,10 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Mail, MapPin, Phone, Linkedin, Github } from "lucide-react";
+import { Mail, MapPin, Phone, Linkedin, Github, ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../lib/firebase";
+import Reveal from "./motion/Reveal";
+import FadeIn from "./motion/FadeIn";
 
 export default function Contact() {
   const [data, setData] = useState({
@@ -35,7 +37,7 @@ export default function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.message) return;
-    
+
     setIsSubmitting(true);
     setStatus(null);
 
@@ -68,162 +70,113 @@ export default function Contact() {
   ];
 
   return (
-    <section id="contact" style={{
-      padding: "1.5rem 2rem",
-      maxWidth: "1100px",
-      margin: "0 auto",
-      position: "relative"
-    }}>
-      <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-        <h2 style={{ fontSize: "clamp(3rem, 7vw, 4.5rem)", fontWeight: 800, marginBottom: "1.5rem" }}>
-          Get In <span className="text-gradient">Touch</span>
-        </h2>
-        <p style={{ color: "rgba(255, 255, 255, 0.7)", fontSize: "clamp(1.1rem, 2.5vw, 1.25rem)", maxWidth: "600px", margin: "0 auto" }}>
-          Have a project in mind? Let's talk.
-        </p>
-      </div>
+    <section id="contact" className="section">
+      <div className="split">
+        <div>
+          <div className="section-header" style={{ marginBottom: "1.75rem" }}>
+            <FadeIn as="span" className="eyebrow">Contact</FadeIn>
+            <Reveal as="h2" className="section-title" text={"Let\u2019s build something together."} />
+            <FadeIn as="p" className="section-lead" delay={0.25}>Have a project in mind, or just want to say hello? My inbox is always open.</FadeIn>
+          </div>
 
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-        gap: "4rem",
-        alignItems: "start"
-      }}>
-        {/* Contact Info Cards */}
-        <div style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "1.5rem"
-        }}>
-          {contactItems.map((item, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-            className="glass-panel"
-            style={{
-              padding: "2rem",
-              display: "flex",
-              alignItems: "center",
-              gap: "1.5rem"
-            }}
-          >
-            <div style={{ 
-              width: "50px", 
-              height: "50px", 
-              borderRadius: "12px", 
-              background: "rgba(139, 92, 246, 0.1)", 
-              display: "flex", 
-              alignItems: "center", 
-              justifyContent: "center",
-              color: "var(--primary)"
-            }}>
-              <item.icon size={24} />
-            </div>
-            <div>
-              <p style={{ fontSize: "0.8rem", color: "rgba(255, 255, 255, 0.5)", margin: 0, textTransform: "uppercase", fontWeight: 700, letterSpacing: "1px" }}>{item.label}</p>
-              {item.href ? (
-                <a href={item.href} style={{ fontSize: "1.1rem", fontWeight: 600, color: "#fff" }}>{item.value}</a>
-              ) : (
-                <p style={{ fontSize: "1.1rem", fontWeight: 600, color: "#fff", margin: 0 }}>{item.value}</p>
-              )}
-            </div>
-          </motion.div>
-          ))}
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+            {contactItems.map((item, i) => (
+              <motion.div
+                key={item.label}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.06 }}
+                style={{ display: "flex", alignItems: "center", gap: "1rem" }}
+              >
+                <div className="icon-box" style={{ width: "40px", height: "40px" }}><item.icon size={18} /></div>
+                <div>
+                  <p style={{ fontSize: "0.72rem", color: "var(--text-faint)", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 600 }}>{item.label}</p>
+                  {item.href ? (
+                    <a href={item.href} className="link-muted" style={{ fontSize: "0.98rem", fontWeight: 500, color: "var(--foreground)" }}>{item.value}</a>
+                  ) : (
+                    <p style={{ fontSize: "0.98rem", fontWeight: 500 }}>{item.value}</p>
+                  )}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <div style={{ display: "flex", gap: "0.5rem", marginTop: "1.75rem" }}>
+            <a href={`https://github.com/${data.contactGithub}`} target="_blank" rel="noopener noreferrer" className="btn-icon" aria-label="GitHub">
+              <Github size={18} />
+            </a>
+            <a href={`https://linkedin.com/in/${data.contactLinkedin}`} target="_blank" rel="noopener noreferrer" className="btn-icon" aria-label="LinkedIn">
+              <Linkedin size={18} />
+            </a>
+          </div>
         </div>
 
-        {/* Contact Form */}
         <motion.form
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
           onSubmit={handleSubmit}
-          className="glass-panel"
-          style={{ 
-            padding: "3rem", 
-            display: "flex", 
-            flexDirection: "column", 
-            gap: "1.5rem" 
-          }}
+          className="card card-pad"
+          style={{ display: "flex", flexDirection: "column", gap: "1.1rem" }}
         >
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 180px), 1fr))", gap: "1rem" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-              <label style={{ fontSize: "0.8rem", color: "rgba(255, 255, 255, 0.6)" }}>Name</label>
-              <input 
-                type="text" 
+              <label htmlFor="contact-name" className="label">Name</label>
+              <input
+                id="contact-name"
+                type="text"
                 required
+                maxLength={100}
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="John Doe"
-                style={{
-                  padding: "0.8rem 1rem", borderRadius: "10px", border: "1px solid rgba(255, 255, 255, 0.08)",
-                  background: "rgba(255, 255, 255, 0.02)", color: "white", outline: "none", fontSize: "0.95rem"
-                }}
+                placeholder="Your name"
+                className="input"
               />
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-              <label style={{ fontSize: "0.8rem", color: "rgba(255, 255, 255, 0.6)" }}>Email</label>
-              <input 
-                type="email" 
+              <label htmlFor="contact-email" className="label">Email</label>
+              <input
+                id="contact-email"
+                type="email"
                 required
+                maxLength={254}
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                placeholder="john@example.com"
-                style={{
-                  padding: "0.8rem 1rem", borderRadius: "10px", border: "1px solid rgba(255, 255, 255, 0.08)",
-                  background: "rgba(255, 255, 255, 0.02)", color: "white", outline: "none", fontSize: "0.95rem"
-                }}
+                placeholder="you@example.com"
+                className="input"
               />
             </div>
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-            <label style={{ fontSize: "0.8rem", color: "rgba(255, 255, 255, 0.6)" }}>Message</label>
-            <textarea 
+            <label htmlFor="contact-message" className="label">Message</label>
+            <textarea
+              id="contact-message"
               required
+              maxLength={5000}
               value={formData.message}
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-              rows={4}
-              placeholder="Hi Aditya, I'd like to talk about..."
-              style={{
-                padding: "0.8rem 1rem", borderRadius: "10px", border: "1px solid rgba(255, 255, 255, 0.08)",
-                background: "rgba(255, 255, 255, 0.02)", color: "white", outline: "none", fontSize: "0.95rem", resize: "none"
-              }}
+              rows={5}
+              placeholder="Tell me a little about your project..."
+              className="input"
+              style={{ resize: "vertical", minHeight: "120px" }}
             />
           </div>
 
-          <motion.button
-            type="submit"
-            disabled={isSubmitting}
-            style={{
-              background: "var(--gradient-1)",
-              color: "white",
-              padding: "1rem",
-              borderRadius: "10px",
-              fontWeight: 700,
-              fontSize: "1rem",
-              cursor: isSubmitting ? "not-allowed" : "pointer",
-              border: "none",
-              marginTop: "0.5rem",
-              transition: "transform 0.2s",
-              opacity: isSubmitting ? 0.7 : 1
-            }}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            {isSubmitting ? "Sending..." : status === 'success' ? "Message Sent!" : "Send Message"}
-          </motion.button>
-          
+          <button type="submit" disabled={isSubmitting} className="btn btn-primary btn-shimmer" style={{ marginTop: "0.25rem" }}>
+            {isSubmitting ? "Sending..." : status === 'success' ? "Message sent" : "Send message"}
+            {!isSubmitting && status !== 'success' && <ArrowRight size={16} />}
+          </button>
+
           {status === 'success' && (
-            <p style={{ color: '#10b981', fontSize: '0.85rem', textAlign: 'center', margin: 0 }}>
-              Thanks! I'll get back to you soon.
+            <p style={{ color: '#22c55e', fontSize: '0.85rem', textAlign: 'center' }}>
+              Thanks! I&apos;ll get back to you soon.
             </p>
           )}
           {status === 'error' && (
-            <p style={{ color: '#ef4444', fontSize: '0.85rem', textAlign: 'center', margin: 0 }}>
+            <p style={{ color: '#ef4444', fontSize: '0.85rem', textAlign: 'center' }}>
               Something went wrong. Please try again.
             </p>
           )}
